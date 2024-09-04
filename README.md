@@ -4,9 +4,10 @@ Evenly Distributes SMTP Server For Mautic according to DB
 1. Download last version url
 2. Unzip files to plugins/MauticEvenlyDistributesBundle
 3. Go to /s/plugins/reload
-4. run doctrine:migrations:migrate command
+4. Move Version20240830164529.php file to Migrations directory
+5. run doctrine:migrations:migrate command
 
    1. `php bin/console doctrine:migrations:migrate 20240830164529 --dry-run`
    2. `php bin/console doctrine:migrations:migrate 20240830164529`
 
-5. See Mautic Evenly Distributes
+6. See Mautic Evenly Distributes
