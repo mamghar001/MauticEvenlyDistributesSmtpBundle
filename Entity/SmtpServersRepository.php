@@ -4,6 +4,10 @@ namespace MauticPlugin\MauticEvenlyDistributesSmtpBundle\Entity;
 
 use Mautic\CoreBundle\Entity\CommonRepository;
 
+/**
+ * Date: 2024-09-04
+ * Author: Gordon.Hu
+ */
 class SmtpServersRepository extends CommonRepository
 {
     /**
