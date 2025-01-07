@@ -4,7 +4,6 @@ namespace MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Spool;
 
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\EmailBundle\Swiftmailer\Spool\DelegatingSpool;
-use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Transport\EvenlyDistributesSmtpTransport;
 use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Helper\CommonHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
@@ -16,9 +15,6 @@ class EvenlyDistributesSpool extends DelegatingSpool
 {
     /** @var CoreParametersHelper  */
     private $coreParametersHelper;
-
-    /** @var EvenlyDistributesSmtpTransport  */
-    private $evenlyDistributesSmtpTransport;
 
     /** @var CommonHelper  */
     private $commonHelper;
@@ -33,13 +29,11 @@ class EvenlyDistributesSpool extends DelegatingSpool
     public function __construct(
         CoreParametersHelper $coreParametersHelper,
         \Swift_Transport $realTransport,
-        EvenlyDistributesSmtpTransport $evenlyDistributesSmtpTransport,
         CommonHelper $commonHelper,
         Container $container
     )
     {
         $this->coreParametersHelper = $coreParametersHelper;
-        $this->evenlyDistributesSmtpTransport = $evenlyDistributesSmtpTransport;
         $this->commonHelper = $commonHelper;
         $this->container = $container;
         parent::__construct($coreParametersHelper, $realTransport);
@@ -55,7 +49,6 @@ class EvenlyDistributesSpool extends DelegatingSpool
     public function flushQueue(\Swift_Transport $transport, &$failedRecipients = null)
     {
         $directoryIterator = new \DirectoryIterator($this->getSpoolDir());
-//        $transport = $this->evenlyDistributesSmtpTransport;
         /* Start the transport only if there are queued files to send */
         if (!$transport->isStarted()) {
             foreach ($directoryIterator as $file) {

@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\Finder;
-use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Transport\EvenlyDistributesSmtpTransport;
 use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Helper\CommonHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
@@ -30,8 +29,6 @@ class ProcessEmailQueueCommand extends ModeratedCommand
 
     /** @var CoreParametersHelper  */
     private CoreParametersHelper $parametersHelper;
-
-    private $evenlyDistributesSmtpTransport;
 
     private $commonHelper;
 
