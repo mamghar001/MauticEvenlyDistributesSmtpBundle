@@ -10,14 +10,16 @@ Only Support Mautic 4.4.12, other versions have not been tested, please test the
 3. Move Version20240830164529.php file to Migrations directory
 4. Go to /s/plugins/reload
 5. run doctrine:migrations:migrate command
-
    1. `php bin/console doctrine:migrations:migrate 20240830164529 --dry-run`
    2. `php bin/console doctrine:migrations:migrate 20240830164529`
+   3. `php bin/console doctrine:migrations:migrate Version20241230143730 --dry-run`
+   4. `php bin/console doctrine:migrations:migrate Version20241230143730`
 
 6. See Mautic Evenly Distributes
 
 ### Note
 1. Only supports sending emails through file queues
 2. When manually removing the plugin directory, please remember to delete the "smtp_Server", "smtp_Server s_log", and "smtp_Server s_stats" tables
+
 
 ### More...
