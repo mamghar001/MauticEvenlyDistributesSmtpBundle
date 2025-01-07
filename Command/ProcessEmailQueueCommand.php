@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\Finder;
 use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Transport\EvenlyDistributesSmtpTransport;
+use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Helper\CommonHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 /**
  * Date: 2024-09-04
@@ -21,26 +23,35 @@ use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Transport\EvenlyD
  */
 class ProcessEmailQueueCommand extends ModeratedCommand
 {
+    private Swift_Transport $swiftTransport;
+
     /** @var EventDispatcherInterface  */
     private EventDispatcherInterface $eventDispatcher;
 
     /** @var CoreParametersHelper  */
     private CoreParametersHelper $parametersHelper;
 
-    /** @var EvenlyDistributesSmtpTransport  */
     private $evenlyDistributesSmtpTransport;
 
+    private $commonHelper;
+
+    private $container;
+
     public function __construct(
+        Swift_Transport $swiftTransport,
         EventDispatcherInterface $eventDispatcher,
         CoreParametersHelper $parametersHelper,
-        EvenlyDistributesSmtpTransport $evenlyDistributesSmtpTransport
+        CommonHelper $commonHelper,
+        Container $container
     )
     {
         parent::__construct();
 
         $this->eventDispatcher  = $eventDispatcher;
         $this->parametersHelper = $parametersHelper;
-        $this->evenlyDistributesSmtpTransport = $evenlyDistributesSmtpTransport;
+        $this->swiftTransport = $swiftTransport;
+        $this->commonHelper = $commonHelper;
+        $this->container = $container;
     }
 
     /**
@@ -93,12 +104,14 @@ EOT
         if (empty($timeout)) {
             $timeout = $this->parametersHelper->get('mautic.mailer_spool_clear_timeout');
         }
+        // Set all active transports as containers
+        $this->commonHelper->setMultiEmailTransport();
 
         if (!$skipClear) {
             //Swift mailer's send command does not handle failed messages well rather it will retry sending forever
             //so let's first handle emails stuck in the queue and remove them if necessary
-            if (!$this->evenlyDistributesSmtpTransport->isStarted()) {
-                $this->evenlyDistributesSmtpTransport->start();
+            if (!$this->swiftTransport->isStarted()) {
+                $this->swiftTransport->start();
             }
 
             $spoolPath = $this->parametersHelper->get('mautic.mailer_spool_path');
@@ -120,6 +133,12 @@ EOT
                         /* This message has just been catched by another process */
                         continue;
                     }
+                    // detect smtp server
+                    $smtp = $this->commonHelper->smtpServersRepository->getActiveServer();
+                    if (empty($smtp)) {
+                        echo 'All servers reached 100% daily max';
+                        return 0;
+                    }
 
                     //rename the file so no other process tries to find it
                     $tmpFilename = str_replace(['.finalretry', '.sending', '.tryagain'], '', $file);
@@ -136,7 +155,11 @@ EOT
                         }
 
                         try {
-                            $this->evenlyDistributesSmtpTransport->send($message);
+                            // set transport, message, stat object
+                            $this->commonHelper->setTransportAndMessageAndStat($smtp, $this->swiftTransport, $message, $stat);
+                            $this->swiftTransport->send($message);
+                            // add successful sent log
+                            $this->commonHelper->addSentLog($smtp['id'], $stat);
                         } catch (\Swift_TransportException $e) {
                             if (!$tryAgain && $this->eventDispatcher->hasListeners(EmailEvents::EMAIL_FAILED)) {
                                 $event = new QueueEmailEvent($message);

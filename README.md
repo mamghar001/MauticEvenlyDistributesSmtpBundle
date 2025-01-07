@@ -16,4 +16,8 @@ Only Support Mautic 4.4.12, other versions have not been tested, please test the
 
 6. See Mautic Evenly Distributes
 
+### Note
+1. Only supports sending emails through file queues
+2. When manually removing the plugin directory, please remember to delete the "smtp_Server", "smtp_Server s_log", and "smtp_Server s_stats" tables
+
 ### More...

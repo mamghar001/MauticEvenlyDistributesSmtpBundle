@@ -3,7 +3,8 @@
 namespace MauticPlugin\MauticEvenlyDistributesSmtpBundle\Swiftmailer\Transport;
 
 use MauticPlugin\MauticEvenlyDistributesSmtpBundle\EvenlyDistributes\EvenlyDistributes;
-use Monolog\Logger;
+use MauticPlugin\MauticEvenlyDistributesSmtpBundle\Helper\CommonHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 /**
  * Date: 2024-09-04
@@ -14,17 +15,24 @@ class EvenlyDistributesSmtpTransport extends \Swift_SmtpTransport
     /** @var EvenlyDistributes  */
     private $evenlyDistributes;
 
-    /** @var Logger  */
-    private $logger;
+    private $commonHelper;
+
+    private $container;
 
     /**
      * @param EvenlyDistributes $EvenlyDistributes
-     * @param Logger $logger
+     * @param CommonHelper $commonHelper
+     * @param Container $container
      */
-    public function __construct(EvenlyDistributes $EvenlyDistributes, Logger $logger)
+    public function __construct(
+        EvenlyDistributes $EvenlyDistributes,
+        CommonHelper $commonHelper,
+        Container $container
+    )
     {
         $this->evenlyDistributes = $EvenlyDistributes;
-        $this->logger = $logger;
+        $this->commonHelper = $commonHelper;
+        $this->container = $container;
         $transport = $this->getEvenlyDistributesSmtpServerForConstruct();
 
         parent::__construct($transport->getHost());
@@ -32,49 +40,13 @@ class EvenlyDistributesSmtpTransport extends \Swift_SmtpTransport
 
     /**
      * CreateDate: 9/4/2024 9:43 AM
-     *
-     * @param \Swift_Mime_SimpleMessage $message
-     * @param $failedRecipients
-     * @return int
-     */
-    public function send(\Swift_Mime_SimpleMessage $message, &$failedRecipients = null): int
-    {
-        $transport = new \Swift_SmtpTransport();
-        $this->getEvenlyDistributesSmtpServer($transport, $message);
-        $mailer = new \Swift_Mailer($transport);
-        return $mailer->send($message, $failedRecipients);
-    }
-
-    /**
-     * CreateDate: 9/4/2024 9:43 AM
-     *
-     * @param $transport
-     * @param \Swift_Mime_SimpleMessage $message
-     * @return void
-     */
-    private function getEvenlyDistributesSmtpServer(&$transport, \Swift_Mime_SimpleMessage &$message): void
-    {
-        try {
-            $this->evenlyDistributes->evenlyDistributesSmtp($transport, $message);
-            $this->logger->info(sprintf('Send by evenly distributes SMTP server: %s with username %s and sender email %s to %s',
-                $this->getHost(), $this->getUsername(),
-                implode(',', $message ? array_keys($message->getFrom()) : []), $message ? implode(', ', array_keys($message->getTo())) :''));
-        } catch (\Exception $exception) {
-            $this->logger->error($exception->getMessage());
-        }
-    }
-
-    /**
-     * CreateDate: 9/4/2024 9:43 AM
      * Just Construct Connect, not represent reality transport
      *
-     * @return \Swift_SmtpTransport
      */
-    private function getEvenlyDistributesSmtpServerForConstruct(): \Swift_SmtpTransport
+    private function getEvenlyDistributesSmtpServerForConstruct()
     {
-        $transport = new \Swift_SmtpTransport();
-        $this->evenlyDistributes->evenlyDistributesSmtp($transport);
-
-        return $transport;
+        $this->commonHelper->setMultiEmailTransport();
+        $smtp = $this->commonHelper->smtpServersRepository->getAllActiveSmtpServers();
+        return $this->container->get('mautic.multi.email.' . $smtp[0]['id']);
     }
 }

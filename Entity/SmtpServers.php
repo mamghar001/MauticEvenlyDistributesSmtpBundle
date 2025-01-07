@@ -66,7 +66,7 @@ class SmtpServers
     public static function loadMetadata(ORM\ClassMetadata $metadata)
     {
         $builder = new ClassMetadataBuilder($metadata);
-        $builder->setTable('smtp_servers')->addId()
+        $builder->setTable('smtp_servers')
             ->setCustomRepositoryClass('MauticPlugin\MauticEvenlyDistributesSmtpBundle\Entity\SmtpServersRepository');
         $builder->addNamedField('server', 'string', 'server');
         $builder->addNamedField('envelopeAddressPrefix', 'string', 'envelope_address_prefix');
@@ -78,7 +78,7 @@ class SmtpServers
         $builder->addNamedField('password', 'string', 'password');
         $builder->addNamedField('maxDailyVolume', 'int', 'max_daily_volume');
         $builder->addNamedField('port', 'int', 'port');
-        $builder->addNamedField('enabled', 'int', 'enabled');
+        $builder->addNamedField('enabled', 'int', 'enabled')->addId();
     }
 
     public function getId(): int

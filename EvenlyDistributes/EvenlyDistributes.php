@@ -3,6 +3,7 @@
 namespace MauticPlugin\MauticEvenlyDistributesSmtpBundle\EvenlyDistributes;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 /**
  * Date: 2024-09-04
@@ -13,31 +14,35 @@ class EvenlyDistributes
     /** @var EntityManager  */
     private $entityManager;
 
-    public function __construct(EntityManager $entityManager)
+    private $container;
+
+    public function __construct(EntityManager $entityManager, Container $container)
     {
         $this->entityManager = $entityManager;
+        $this->container = $container;
     }
 
     /**
-     * CreateDate: 9/4/2024 9:42 AM
+     * CreateDate: 1/2/2025 4:21 PM
      *
-     * @param \Swift_SmtpTransport $evenlyDistributesSmtpTransport
      * @param \Swift_Mime_SimpleMessage|null $message
-     * @return void
+     * @return object|null
      */
-    public function evenlyDistributesSmtp(\Swift_SmtpTransport &$evenlyDistributesSmtpTransport, \Swift_Mime_SimpleMessage &$message = null): void
+    public function evenlyDistributesSmtp(\Swift_Mime_SimpleMessage &$message = null)
     {
         $smtpRepository = $this->entityManager->getRepository('MauticEvenlyDistributesSmtpBundle:SmtpServers');
-        $smtp = $smtpRepository->getAvailableSmtpServers();
+        $smtp = $smtpRepository->getActiveServer();
+        $evenlyDistributesSmtpTransport = $this->container->get('mautic.multi.email.' . $smtp['id']);
 
-        $evenlyDistributesSmtpTransport->setHost($smtp['server']);
-        $evenlyDistributesSmtpTransport->setPort($smtp['port'] ?? 25);
-        $evenlyDistributesSmtpTransport->setEncryption($smtp['encryption']);
-        $evenlyDistributesSmtpTransport->setAuthMode($smtp['auth_mode']);
-        $evenlyDistributesSmtpTransport->setUsername($smtp['send_email_name']);
-        $evenlyDistributesSmtpTransport->setPassword($smtp['password']);
+//        $evenlyDistributesSmtpTransport->setHost($smtp['server']);
+//        $evenlyDistributesSmtpTransport->setPort($smtp['port'] ?? 25);
+//        $evenlyDistributesSmtpTransport->setEncryption($smtp['encryption']);
+//        $evenlyDistributesSmtpTransport->setAuthMode($smtp['auth_mode']);
+//        $evenlyDistributesSmtpTransport->setUsername($smtp['send_email_address']);
+//        $evenlyDistributesSmtpTransport->setPassword($smtp['password']);
         if ($message !== null) {
-            $message->setFrom($smtp['fromEmail'], $smtp['fromName']);
+            $message->setFrom($smtp['send_email_address'], $smtp['send_email_name']);
         }
+        return $evenlyDistributesSmtpTransport;
     }
 }
