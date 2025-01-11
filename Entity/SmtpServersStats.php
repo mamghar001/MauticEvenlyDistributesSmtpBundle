@@ -18,7 +18,7 @@ class SmtpServersStats
     public static function loadMetadata(ORM\ClassMetadata $metadata)
     {
         $builder = new ClassMetadataBuilder($metadata);
-        $builder->setTable('smtp_servers')->addId()
+        $builder->setTable('smtp_servers_stats')->addId()
             ->setCustomRepositoryClass('MauticPlugin\MauticEvenlyDistributesSmtpBundle\Entity\SmtpServersStatsRepository');
         $builder->addNamedField('smtpServerId', 'integer', 'smtp_server_id');
         $builder->addNamedField('totalNum', 'integer', 'total_num');

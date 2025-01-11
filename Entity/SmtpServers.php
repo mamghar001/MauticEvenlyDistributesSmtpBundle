@@ -12,7 +12,7 @@ use Mautic\CoreBundle\Doctrine\Mapping\ClassMetadataBuilder;
 class SmtpServers
 {
     /**
-     * @var int
+     * @var integer
      */
     private $id;
 
@@ -49,17 +49,17 @@ class SmtpServers
     private $password;
 
     /**
-     * @var int
+     * @var integer
      */
     private $maxDailyVolume;
 
     /**
-     * @var int
+     * @var integer
      */
     private $port;
 
     /**
-     * @var int
+     * @var integer
      */
     private $enabled;
 
@@ -76,12 +76,12 @@ class SmtpServers
         $builder->addNamedField('encryption', 'string', 'encryption');
         $builder->addNamedField('authMode', 'string', 'auth_mode');
         $builder->addNamedField('password', 'string', 'password');
-        $builder->addNamedField('maxDailyVolume', 'int', 'max_daily_volume');
-        $builder->addNamedField('port', 'int', 'port');
-        $builder->addNamedField('enabled', 'int', 'enabled')->addId();
+        $builder->addNamedField('maxDailyVolume', 'integer', 'max_daily_volume');
+        $builder->addNamedField('port', 'integer', 'port');
+        $builder->addNamedField('enabled', 'integer', 'enabled')->addId();
     }
 
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -173,34 +173,34 @@ class SmtpServers
         return $this;
     }
 
-    public function getMaxDailyVolume(): int
+    public function getMaxDailyVolume()
     {
         return $this->maxDailyVolume;
     }
 
-    public function setMaxDailyVolume(int $maxDailyVolume): SmtpServers
+    public function setMaxDailyVolume($maxDailyVolume): SmtpServers
     {
         $this->maxDailyVolume = $maxDailyVolume;
         return $this;
     }
 
-    public function getPort(): int
+    public function getPort()
     {
         return $this->port;
     }
 
-    public function setPort(int $port): SmtpServers
+    public function setPort($port): SmtpServers
     {
         $this->port = $port;
         return $this;
     }
 
-    public function getEnabled(): int
+    public function getEnabled()
     {
         return $this->enabled;
     }
 
-    public function setEnabled(int $enabled): SmtpServers
+    public function setEnabled($enabled): SmtpServers
     {
         $this->enabled = $enabled;
         return $this;
