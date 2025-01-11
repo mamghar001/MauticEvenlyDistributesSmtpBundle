@@ -149,7 +149,10 @@ class CommonHelper
             $listUnsubscribe->setValue($this->getCustomListUnsubscribe($listUnsubscribe->getValue(), $smtp['envelope_address_domain'], $smtp['envelope_address_prefix']));
         }
 
-        $message->setFrom($smtp['send_email_address'], $stat->getEmail() ? $stat->getEmail()->getFromName() : $smtp['send_email_name']);
+        $message->setFrom($smtp['send_email_address'], $smtp['send_email_name']);
+        if (empty($stat->getEmail()?->getReplyToAddress())) {
+            $message->setReplyTo($smtp['send_email_address']);
+        }
     }
 
     /**
