@@ -34,7 +34,7 @@ class SmtpServersLog
         ;
         $builder->addNamedField('smtpServerId', 'integer', 'smtp_server_id');
         $builder->addNamedField('leadId', 'integer', 'lead_id', true);
-        $builder->addNamedField('emailId', 'integer', 'email_id');
+        $builder->addNamedField('emailId', 'integer', 'email_id', true);
         $builder->addNamedField('sent_date', 'datetime', 'sent_date');
     }
 
