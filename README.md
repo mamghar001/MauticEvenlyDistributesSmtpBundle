@@ -1,6 +1,18 @@
 # Evenly Distributes SMTP Server For Mautic
 Evenly Distributes SMTP Server For Mautic according to DB
 
+### Features
+Supports both third-party SMTP vendors and self-built SMTP servers. When adding records to the table 'smtp_servers', the vendor field defaults to 'self host'.
+1. Vendor field is 'self host' value (envelope_address_prefix and envelope_address_domain are the fields of the table 'smtp_servers')
+   
+   **Monitored Inbox is set**
+
+   **1.1 return-path** will be replaced: envelope_address_prefix+bounce_677b82c416ce2383461223@envelope_address_domain.
+   
+   **1.2 List-Unsubscribe** will be replaced: <mailto:envelope_address_prefix+unsubscribe_677b82c416ce2383461223@envelope_address_domain>
+2. Vendor field is other values
+   return-path is set to null
+
 ### Support Mautic's Version
 Only Support Mautic 4.4.12/4.4.13 and PHP 8.0 or later, other versions have not been tested, please test them yourself
 

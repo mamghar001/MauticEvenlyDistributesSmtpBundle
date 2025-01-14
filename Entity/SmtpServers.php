@@ -46,6 +46,8 @@ class SmtpServers
 
     private $authMode;
 
+    private $userName;
+
     private $password;
 
     /**
@@ -57,6 +59,8 @@ class SmtpServers
      * @var integer
      */
     private $port;
+
+    private $vendor;
 
     /**
      * @var integer
@@ -75,9 +79,13 @@ class SmtpServers
         $builder->addNamedField('sendEmailAddress', 'string', 'send_email_address');
         $builder->addNamedField('encryption', 'string', 'encryption');
         $builder->addNamedField('authMode', 'string', 'auth_mode');
-        $builder->addNamedField('password', 'string', 'password');
+        $builder->addNamedField('userName', 'string', 'user_name');
+        $builder->addNamedField('password', 'string', 'password', true);
         $builder->addNamedField('maxDailyVolume', 'integer', 'max_daily_volume');
         $builder->addNamedField('port', 'integer', 'port');
+        $builder->createField('vendor', 'string')->columnName('vendor')
+            ->nullable(false)->option('default', 'self host')
+            ->build();
         $builder->addNamedField('enabled', 'integer', 'enabled')->addId();
     }
 
@@ -162,6 +170,17 @@ class SmtpServers
         return $this;
     }
 
+    public function getUserName()
+    {
+        return $this->userName;
+    }
+
+    public function setUserName(string $userName): SmtpServers
+    {
+        $this->userName = $userName;
+        return $this;
+    }
+
     public function getPassword(): string
     {
         return $this->password;
@@ -192,6 +211,17 @@ class SmtpServers
     public function setPort($port): SmtpServers
     {
         $this->port = $port;
+        return $this;
+    }
+
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    public function setVendor($vendor): SmtpServers
+    {
+        $this->vendor = $vendor;
         return $this;
     }
 

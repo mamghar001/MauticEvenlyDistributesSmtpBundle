@@ -28,8 +28,13 @@ final class Version20240830164529 extends AbstractMauticMigration
             `envelope_address_domain` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
             `send_email_name` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
             `send_email_address` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
+            `encryption` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
+            `auth_mode` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
+            `user_name` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
+            `password` varchar(191) COLLATE utf8_unicode_ci NOT NULL,
             `max_daily_volume` int(11) NOT NULL,
             `port` int(11),
+            `vendor` varchar(191) COLLATE utf8_unicode_ci not null default 'self host',
             `enabled` tinyint(4) NOT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"

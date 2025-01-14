@@ -61,7 +61,7 @@ class CommonHelper
             if (!$this->container->has('mautic.multi.email.' . $value['id'])) {
                 $this->container->set('mautic.multi.email.' . $value['id'],
                     (new \Swift_SmtpTransport($value['server'], $value['port'], $value['encryption']))
-                        ->setUsername($value['send_email_address'])
+                        ->setUsername($value['user_name'])
                         ->setPassword($value['password'])->setAuthMode($value['auth_mode'])
                 );
             }
@@ -144,9 +144,15 @@ class CommonHelper
         // get contact id
         $stat = $this->getContactId($message->leadIdHash);
         if ($bounceEmail = $message->getReturnPath()) {
-            $message->setReturnPath($this->getCustomBounceAddress($bounceEmail, $smtp['envelope_address_domain'], $smtp['envelope_address_prefix']));
             $listUnsubscribe = $message->getHeaders()->get('List-Unsubscribe');
-            $listUnsubscribe->setValue($this->getCustomListUnsubscribe($listUnsubscribe->getValue(), $smtp['envelope_address_domain'], $smtp['envelope_address_prefix']));
+            if ($smtp['vendor'] == 'self host') {
+                $message->setReturnPath($this->getCustomBounceAddress($bounceEmail, $smtp['envelope_address_domain'], $smtp['envelope_address_prefix']));
+                $listUnsubscribe->setValue($this->getCustomListUnsubscribe($listUnsubscribe->getValue(), $smtp['envelope_address_domain'], $smtp['envelope_address_prefix']));
+            } else {
+                $message->setReturnPath(null);
+                $unsub = explode(',', $listUnsubscribe->getValue());
+                $listUnsubscribe->setValue($unsub[1]);
+            }
         }
 
         $message->setFrom($smtp['send_email_address'], $smtp['send_email_name']);
