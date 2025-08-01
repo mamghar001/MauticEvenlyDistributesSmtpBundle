@@ -14,7 +14,7 @@ Supports both third-party SMTP vendors and self-built SMTP servers. When adding 
    return-path is set to null
 
 ### Support Mautic's Version
-Only Support Mautic 4.4.12/4.4.13 and PHP 8.0 or later, other versions have not been tested, please test them yourself
+Only Support Mautic v6.0.3 and php 8.1.2 other versions have not been tested, please test them yourself
 
 ### Manual installation
 1. Download last version https://github.com/HN-PRO/MauticEvenlyDistributesSmtpBundle/releases/
